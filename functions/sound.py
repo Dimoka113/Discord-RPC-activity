@@ -10,7 +10,7 @@ class Sound(object):
         self.dumps = []
         self.sound = 0
 
-    def сurrent_sounds(self) -> float:
+    def current_sounds(self) -> float:
         sessions = AudioUtilities.GetAllSessions()
         x = []
         for session in sessions:

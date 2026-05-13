@@ -6,11 +6,11 @@
         "buttons": [
             {
                 "label": "You're Information", 
-                "url": ""
+                "url": "Links"
             },
             {
-                "label": "", 
-                "url": ""
+                "label": "And more more more", 
+                "url": "More links!"
             }
         ]
     },
@@ -18,12 +18,12 @@
         {
             "name": "Code In Visual Studio Code",
             "processes": ["code.exe"],
-            "details": "",
-            "state": "",
-            "large_image": "",
+            "details": "details",
+            "state": "state",
+            "large_image": "large_image",
             "small_image": "vs",
-            "small_text": "",
-            "large_text": ""
+            "small_text": "small_text",
+            "large_text": "large_text"
         },
         {
             "comment": "And more, And moreeeee..."
@@ -32,23 +32,23 @@
             "name": "Doing absolutely nothing",
             "processes": [], 
             "chill": true,
-            "details": "",
-            "state": "",
-            "large_image": "",
-            "small_image": "",
-            "small_text": "",
-            "large_text": ""
+            "details": "details",
+            "state": "state",
+            "large_image": "large_image",
+            "small_image": "small_image",
+            "small_text": "small_text",
+            "large_text": "large_text"
         },
         {
             "name": "Currently away",
             "idle": true,
             "processes": [], 
-            "details": "",
-            "state": "",
-            "large_image": "",
-            "small_image": "",
-            "small_text": "",
-            "large_text": ""
+            "details": "details",
+            "state": "state",
+            "large_image": "large_image",
+            "small_image": "small_image",
+            "small_text": "small_text",
+            "large_text": "large_text"
         }
     ]
 }

@@ -22,7 +22,7 @@ class Client(Gateway):
             open(self.p, "w+").write(self.id)
             logger.warn("The client_id was saved, and the original file in client_id.json was overwritten with zeros.")
             logger.info("If you need to specify a different client_id, delete the file: data/.client")
-            self.white("0000000000000000000")
+            self.write("0000000000000000000")
         else:
             self.id = str(open(self.p, "r").read())
 

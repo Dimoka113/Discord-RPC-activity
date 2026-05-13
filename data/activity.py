@@ -1,4 +1,5 @@
 import json
+from functions import logger
 from functions.gateway import Gateway
 from pypresence import Presence
 from functions.logger import Logger
@@ -26,16 +27,15 @@ class Activity(Gateway):
     client = None
     sounds: Sound = None 
 
-    def __init__(self, logger = None):
+    def __init__(self, logger = Logger("Activity")):
+        super().__init__(self.path, logger)
+        self.logger = logger
         self.client = Client("data/client_id.json")
         self.rpc = Presence(self.client.decode(self.client.id))
         self.config = Config(self.read()["config"])
         self.sounds = Sound()
 
-        self.functions = Functions(Logger("Static"), self.config, self.sounds)
-        self.logger = logger
-
-        super().__init__(self.path, Logger("Gateway"))
+        self.functions = Functions(self.logger, self.config, self.sounds)
 
     def connect(self):
         try: self.rpc.connect() 

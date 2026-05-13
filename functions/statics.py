@@ -14,7 +14,7 @@ class Functions(object):
     sounds = None
 
 
-    def __init__(self, logger: Logger, config, sounds):
+    def __init__(self, logger: Logger , config, sounds):
         from data.activity import Config
         from functions.sound import Sound
         self.logger = logger
@@ -42,7 +42,7 @@ class Functions(object):
     def detect_activity(self, act: list[dict]):
         idle_time = self.get_idle_duration()
         running = self.get_running_processes()
-        self.sounds.add_in_dumps(self.sounds.сurrent_sounds())
+        self.sounds.add_in_dumps(self.sounds.current_sounds())
         self.logger.debug(self.sounds.dumps)
 
         self.logger.debug(self.config.time_idle // self.config.sleep)
@@ -56,7 +56,7 @@ class Functions(object):
         for activity in act:
             if activity.get("idle") or activity.get("chill"):
                 continue
-            for process in activity["processes"]:
+            for process in activity.get("processes",[]):
                 if process.lower() in running:
                     new_activity = activity
 

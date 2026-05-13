@@ -14,7 +14,7 @@ class Functions(object):
     sounds = None
 
 
-    def __init__(self, logger: Logger , config, sounds):
+    def __init__(self, logger: Logger, config, sounds):
         from data.activity import Config
         from functions.sound import Sound
         self.logger = logger
@@ -32,7 +32,7 @@ class Functions(object):
         processes = set()
         for proc in psutil.process_iter(["name"]):
             try:
-                name = proc.info["name"]
+                name: str = proc.info["name"]
                 if name:
                     processes.add(name.lower())
             except:

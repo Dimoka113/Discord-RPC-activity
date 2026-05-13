@@ -5,7 +5,6 @@ from pypresence import Presence
 from functions.logger import Logger
 from functions.statics import Functions
 from data.loader import Client
-from pycaw.pycaw import AudioUtilities
 from functions.sound import Sound
 
 class Config(object):
@@ -28,7 +27,7 @@ class Activity(Gateway):
     sounds: Sound = None 
 
     def __init__(self, logger = Logger("Activity")):
-        super().__init__(self.path, logger)
+        super().__init__(self.path, Logger("Activity-Gateway"))
         self.logger = logger
         self.client = Client("data/client_id.json")
         self.rpc = Presence(self.client.decode(self.client.id))

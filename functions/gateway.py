@@ -47,10 +47,11 @@ If unsuccessful, outputs a log with `WARN` and returns `False`.
         with open(self.path, "w", encoding="UTF-8") as file: json.dump(self._create_default_data(), file, indent=3, ensure_ascii=False)
 
     def _create_default_data(self):
-        schema_path = os.path.join(os.path.dirname(__file__), "..", "data", "schema.data.json")
+        data_path = os.path.join(os.path.dirname(__file__), "..", "data", "data.json")
 
-        if not os.path.isfile(schema_path):
-            self.logger.warn("schema.json missing, using hardcoded fallback")
+        if not os.path.isfile(data_path):
+            self.logger.error("data.json is missing!")
+            self.logger.warn("A default version has been generated.")
             return {
                 "config": {
                     "sleep": 5,
@@ -61,5 +62,5 @@ If unsuccessful, outputs a log with `WARN` and returns `False`.
                 "activity": []
             }
 
-        with open(schema_path, "r", encoding="utf-8") as f:
+        with open(data_path, "r", encoding="utf-8") as f:
             return json.load(f)

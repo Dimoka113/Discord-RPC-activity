@@ -1,7 +1,14 @@
-import time
-from functions.statics import *
 from functions.logger import Logger
-from data.activity import Activity
+from functions.autopip import *
+import time
+
+try:
+    from functions.statics import *
+    from data.activity import Activity
+except:
+    install_requirements()
+    from functions.statics import *
+    from data.activity import Activity
 
 current_activity = None
 Logger.level(Logger.types.INFO)

@@ -3,9 +3,10 @@ import psutil
 import ctypes
 from functions.logger import Logger
 from types import NoneType
-
+from typing import Any
 
 class LASTINPUTINFO(ctypes.Structure): _fields_ = [("cbSize", ctypes.c_uint), ("dwTime", ctypes.c_uint),]
+
 
 
 class Functions(object):
@@ -39,9 +40,8 @@ class Functions(object):
                 pass
         return processes
 
-    def detect_activity(self, act: list[dict]):
+    def detect_activity(self, running: Any, act: list[dict]):
         idle_time = self.get_idle_duration()
-        running = self.get_running_processes()
         self.sounds.add_in_dumps(self.sounds.current_sounds())
         self.logger.debug(self.sounds.dumps)
 

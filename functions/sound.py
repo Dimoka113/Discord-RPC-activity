@@ -1,6 +1,5 @@
 from pycaw.pycaw import AudioUtilities
 from pycaw.pycaw import IAudioMeterInformation
-from types import NoneType
 
 class Sound(object):
     dumps = None

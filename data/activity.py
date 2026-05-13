@@ -1,12 +1,10 @@
-import json
-from functions import logger
 from functions.gateway import Gateway
 from pypresence import Presence
 from functions.logger import Logger
 from functions.statics import Functions
 from data.loader import Client
 from functions.sound import Sound
-
+import time
 class Config(object):
     sleep = None
     time_idle = None
@@ -25,10 +23,11 @@ class Activity(Gateway):
     config: Config = None
     client = None
     sounds: Sound = None 
+    is_connect = False
 
-    def __init__(self, logger = Logger("Activity")):
+    def __init__(self):
         super().__init__(self.path, Logger("Activity-Gateway"))
-        self.logger = logger
+        self.logger = Logger("Activity")
         self.client = Client("data/client_id.json")
         self.rpc = Presence(self.client.decode(self.client.id))
         self.config = Config(self.read()["config"])
@@ -36,9 +35,28 @@ class Activity(Gateway):
 
         self.functions = Functions(self.logger, self.config, self.sounds)
 
-    def connect(self):
-        try: self.rpc.connect() 
-        except: self.logger.error("Unable to establish connection for RPC")
-
     def get_activity(self): return self.read()["activity"]
+
+    def connect(self) -> bool:
+        try: self.rpc.connect() 
+        except: 
+            for wait in range(1, 5+1):
+                try:
+                    time.sleep(self.config.sleep * wait)
+                    self.rpc.connect() 
+                except:
+                    self.logger.debug("Unable to establish connection for RPC"); 
+                    continue
+                else:
+                    return True
+            self.logger.error("Unable to establish connection for RPC"); 
+            self.disconnect()
+            return False
+        else: 
+            self.is_connect = True
+            return True
+
+    def disconnect(self): self.is_connect = False
+
+
     

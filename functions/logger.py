@@ -57,11 +57,37 @@ class Logger(object):
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             rotated_file = log_path.parent /f"{log_path.stem}_{timestamp}{log_path.suffix}"
             log_path.rename(rotated_file)
-
-    def _write_file(self, text):
+            
+    def _write_file(self, text: str):
+        import re
         log_path = self._get_log_path()
         self._rotate_log_if_needed(log_path)
-        with open(log_path, "a", encoding="utf-8") as f: f.write(text + "\n")
+        lines = []
+
+        if log_path.exists():
+            with open(log_path, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+        text = text.rstrip("\n")
+
+        current_clean = re.sub(r"^\[\d{4}-\d{2}-\d{2} .*?\]\s\[[A-Z]+\]\s?", "", text)
+
+        if lines:
+            last_line = lines[-1].rstrip("\n")
+            count_match = re.match(r"^\[(\d+)\]\s(.*)$", last_line)
+            count = 1
+            if count_match:
+                count = int(count_match.group(1))
+                last_line = count_match.group(2)
+
+            last_clean = re.sub(r"^\[\d{4}-\d{2}-\d{2} .*?\]\s\[[A-Z]+\]\s?", "", last_line)
+
+            if last_clean == current_clean:
+                lines[-1] = f"[{count + 1}] {text}\n"
+                with open(log_path, "w", encoding="utf-8") as f: f.writelines(lines)
+                return
+            
+        with open(log_path, "a", encoding="utf-8") as f:
+            f.write(text + "\n")
 
     def _log(self, tag, text, color, key):
         if key in self.logging:

@@ -4,7 +4,9 @@ import time
 
 def main(logger: Logger, acty: Activity):
     current_activity = None; start = 0
-    
+    if logger.logging == Logger.types.DEBUG: 
+        logger.info("DEBUG mode enable, All actions will be logged. And all errors will return the exception stack")
+        
     while not acty.is_connect:
         running = acty.functions.get_running_processes()
         if 'discord.exe' in running: acty.connect()
@@ -39,6 +41,8 @@ def main(logger: Logger, acty: Activity):
                 time.sleep(acty.config.sleep)
         except Exception as e:
             logger.error(e)
-            if logger.logging == Logger.types.DEBUG: raise
+            if logger.logging == Logger.types.DEBUG: 
+                logger.info("DEBUG mode enable, raising exception...")
+                raise e
 
         time.sleep(acty.config.sleep)

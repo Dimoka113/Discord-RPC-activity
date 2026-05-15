@@ -18,16 +18,15 @@ class Gateway(object):
 
     def read(self):
         if not os.path.isfile(self.path):
-            self.logger.warn(f"Config not found: {self.path}. Creating default.")
-            self._create_default()
-            return self._create_default_data()
+            self.logger.error(f"data.json not found: {self.path}. Creating default.")
+            return self._create_default()
 
         with open(self.path, "r", encoding="UTF-8") as file: 
             try:
                 return json.load(file)
             except json.decoder.JSONDecodeError as err:
                 self.logger.warn(err)
-                return self._create_default_data()
+                return self._create_default()
 
     def write(self, data: list) -> bool:
         """
@@ -44,23 +43,10 @@ If unsuccessful, outputs a log with `WARN` and returns `False`.
 
     def _create_default(self):
         os.makedirs(os.path.dirname(self.path), exist_ok=True)
-        with open(self.path, "w", encoding="UTF-8") as file: json.dump(self._create_default_data(), file, indent=3, ensure_ascii=False)
+        done = self.write(self._create_default_data())
+        if done: return self.read()
 
     def _create_default_data(self):
-        data_path = os.path.join(os.path.dirname(__file__), "..", "data", "data.json")
-
-        if not os.path.isfile(data_path):
-            self.logger.error("data.json is missing!")
-            self.logger.warn("A default version has been generated.")
-            return {
-                "config": {
-                    "sleep": 5,
-                    "time_idle": 60,
-                    "sound_volume": 10,
-                    "buttons": []
-                },
-                "activity": []
-            }
-
-        with open(data_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+        self.logger.warn("A default data.json has been generated.")
+        self.logger.info("If you need help filling out data.json, you can check out the example in schema.data.json")
+        return {"config": {"sleep": 5,"time_idle": 60,"sound_volume": 10,"buttons": []},"activity": []}

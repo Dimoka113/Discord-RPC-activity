@@ -29,6 +29,8 @@ class Functions(object):
         millis = ctypes.windll.kernel32.GetTickCount() - lii.dwTime
         return millis / 1000.0
 
+    def lower_list(self, n): return [str(i).lower() for i in n] if n else None
+
     def get_running_processes(self):
         processes = set()
         for proc in psutil.process_iter(["name"]):
@@ -39,6 +41,22 @@ class Functions(object):
             except:
                 pass
         return processes
+
+    def get_running_processes_exe(self):
+        processes = set()
+
+        for proc in psutil.process_iter(["name", "exe"]):
+            try:
+                name: str = proc.info["name"]
+                exe: str = proc.info["exe"]
+                if name: processes.add((name.lower(), exe))
+
+            except (psutil.NoSuchProcess,
+                    psutil.AccessDenied,
+                    psutil.ZombieProcess):
+                pass
+
+        return list(processes)
 
     def detect_activity(self, running: Any, act: list[dict]):
         idle_time = self.get_idle_duration()
@@ -54,11 +72,19 @@ class Functions(object):
         new_activity = None
 
         for activity in act:
-            if activity.get("idle") or activity.get("chill"):
-                continue
-            for process in activity.get("processes",[]):
-                if process.lower() in running:
-                    new_activity = activity
+            if activity.get("idle") or activity.get("chill"): continue
+
+            for name, exe in running:
+                exe = str(exe)
+                if name in self.lower_list(activity["processes"]): 
+                    path = activity.get("path")
+                    if path:
+                        if exe in self.lower_list(path): 
+                            new_activity = activity; break
+                    else:
+                        new_activity = activity; break
+                    
+            if new_activity: break
 
         is_idle_time = idle_time >= self.config.time_idle
         is_loud = self.sounds.sound <= self.config.sound_volume
@@ -77,6 +103,5 @@ class Functions(object):
             for activity in act:
                 if activity.get("chill") and isinstance(new_activity, NoneType):
                     new_activity = activity
-
-
+                    
         return new_activity

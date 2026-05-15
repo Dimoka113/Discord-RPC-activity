@@ -8,15 +8,14 @@ def main(logger: Logger, acty: Activity):
         logger.info("DEBUG mode enable, All actions will be logged. And all errors will return the exception stack")
         
     while not acty.is_connect:
-        running = acty.functions.get_running_processes()
-        if 'discord.exe' in running: acty.connect()
+        if 'discord.exe' in acty.functions.get_running_processes(): acty.connect()
         else: 
             if not start: logger.info("Waiting for Discord to open..."); start = 1
             else: logger.debug("Waiting for Discord to open..."); time.sleep(acty.config.sleep)
     while True:
         try:
-            running = acty.functions.get_running_processes()
-            if 'discord.exe' in running: 
+            running = acty.functions.get_running_processes_exe()
+            if 'discord.exe' in acty.functions.get_running_processes(): 
                 activity = acty.functions.detect_activity(running, acty.get_activity())
                 logger.debug(activity)
                 if activity != current_activity:

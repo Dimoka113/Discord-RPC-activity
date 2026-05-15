@@ -16,8 +16,20 @@
     },
     "activity": [
         {
+            "name": "Java",
+            "processes": ["javaw.exe"],
+            "path": ["D:\\Windows\\AppData\\Roaming\\ATLauncher\\jre\\bin\\javaw.exe"],
+            "details": "details",
+            "state": "state",
+            "large_image": "large_image",
+            "small_image": "vs",
+            "small_text": "small_text",
+            "large_text": "large_text"
+        },
+        {
             "name": "Code In Visual Studio Code",
             "processes": ["code.exe"],
+            "path": [],
             "details": "details",
             "state": "state",
             "large_image": "large_image",
@@ -31,6 +43,7 @@
         {
             "name": "Doing absolutely nothing",
             "processes": [], 
+            "path": [],
             "chill": true,
             "details": "details",
             "state": "state",
@@ -43,6 +56,7 @@
             "name": "Currently away",
             "idle": true,
             "processes": [], 
+            "path": [],
             "details": "details",
             "state": "state",
             "large_image": "large_image",

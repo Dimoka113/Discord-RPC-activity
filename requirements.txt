@@ -2,3 +2,4 @@ pypresence
 psutil
 pycaw 
 comtypes
+winotify

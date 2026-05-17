@@ -4,8 +4,8 @@
 
 ## Project Roadmap (in the near future):
 - Write a clear and simple README (if only there were more words...)
-- Implement Windows notifications
-- Implement hotkeys to enable/disable activity
+- <s>Implement Windows notifications</s>
+- <s>Implement hotkeys to enable/disable activity</s>
 - Design a user interface (maybe?)
 - Automatic updates via GitHub (possible, necessary?)
 - Automatic shutdown upon detection of other activity (is this possible?)

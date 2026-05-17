@@ -1,5 +1,10 @@
 {
     "config": {
+        "keyboards": {
+            "hide_activity": "ALT+F12",
+            "show_activity": "ALT+F12"
+        },
+        "display_activity_on_start": true,
         "sleep": 5,
         "time_idle": 30,
         "sound_volume": 10,

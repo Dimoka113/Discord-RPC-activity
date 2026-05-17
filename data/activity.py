@@ -53,10 +53,14 @@ class Activity(Gateway):
             self.disconnect()
             return False
         else: 
+            self.logger.debug("Open new RPC session..")
             self.is_connect = True
             return True
 
-    def disconnect(self): self.is_connect = False
+    def disconnect(self): 
+        self.logger.debug("Close RPC session..")
+        self.is_connect = False
+        self.rpc.close()
 
 
     

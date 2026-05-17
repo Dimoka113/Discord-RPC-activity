@@ -16,6 +16,7 @@ def main(logger: Logger, acty: Activity):
         try:
             running = acty.functions.get_running_processes_exe()
             if 'discord.exe' in acty.functions.get_running_processes(): 
+                if not acty.is_connect: acty.connect()
                 activity = acty.functions.detect_activity(running, acty.get_activity())
                 logger.debug(activity)
                 if activity != current_activity:
@@ -36,8 +37,10 @@ def main(logger: Logger, acty: Activity):
                         )
                         logger.info(activity['name'])
             else:
+                if acty.is_connect: acty.disconnect()
                 logger.debug("Waiting for Discord to open...")
                 time.sleep(acty.config.sleep)
+                
         except Exception as e:
             logger.error(e)
             if logger.logging == Logger.types.DEBUG: 

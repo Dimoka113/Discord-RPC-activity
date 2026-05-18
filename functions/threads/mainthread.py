@@ -2,9 +2,9 @@ from functions.logger import Logger
 from data.activity import Activity
 import time
 import pythoncom
+from threading import Event
 
-
-def main(logger: Logger, acty: Activity):
+def main(event: Event, logger: Logger, acty: Activity):
     pythoncom.CoInitialize()
 
     current_activity = None; start = 0
@@ -16,46 +16,51 @@ def main(logger: Logger, acty: Activity):
         else: 
             if not start: logger.info("Waiting for Discord to open..."); start = 1
             else: logger.debug("Waiting for Discord to open..."); time.sleep(acty.config.sleep)
+    
     while True:
-        try:
-            if acty.display_activity: 
-                running = acty.functions.get_running_processes_exe()
-                if 'discord.exe' in acty.functions.get_running_processes(): 
-                    if not acty.is_connect: acty.connect()
-                    activity = acty.functions.detect_activity(running, acty.get_activity())
-                    logger.debug(activity)
-                    if activity != current_activity:
-                        current_activity = activity
-                        if activity is None:
-                            acty.rpc.clear()
-                            logger.info("Cleared")
-                        else:
-                            acty.rpc.update(
-                                details=activity["details"],
-                                state=activity["state"],
-                                name=activity["name"],
-                                large_image=activity["large_image"],
-                                small_image=activity["small_image"],
-                                small_text=activity["small_text"],
-                                buttons=acty.config.buttons,
-                                large_text=activity["large_text"]
-                            )
-                            logger.info(activity['name'])
+        if not event.is_set():
+            try:
+                if acty.display_activity: 
+                    running = acty.functions.get_running_processes_exe()
+                    if 'discord.exe' in acty.functions.get_running_processes(): 
+                        if not acty.is_connect: acty.connect()
+                        activity = acty.functions.detect_activity(running, acty.get_activity())
+                        logger.debug(activity)
+                        if activity != current_activity:
+                            current_activity = activity
+                            if activity is None:
+                                acty.rpc.clear()
+                                logger.info("Cleared")
+                            else:
+                                acty.rpc.update(
+                                    details=activity["details"],
+                                    state=activity["state"],
+                                    name=activity["name"],
+                                    large_image=activity["large_image"],
+                                    small_image=activity["small_image"],
+                                    small_text=activity["small_text"],
+                                    buttons=acty.config.buttons,
+                                    large_text=activity["large_text"]
+                                )
+                                logger.info(activity['name'])
+                    else:
+                        current_activity = None
+                        acty.rpc.clear()
+                        time.sleep(1)
+                        if acty.is_connect: acty.disconnect()
+                        logger.debug("Waiting for Discord to open...")
                 else:
                     current_activity = None
+                    time.sleep(1)
                     if acty.is_connect: acty.disconnect()
-                    logger.debug("Waiting for Discord to open...")
-                    time.sleep(acty.config.sleep)
-            else:
-                current_activity = None
-                if acty.is_connect: acty.disconnect()
-                logger.debug("Waiting for the user to enable display activity...")     
-                time.sleep(acty.config.sleep)
+                    logger.debug("Waiting for the user to enable display activity...")     
 
-        except Exception as e:
-            logger.error(e)
-            if logger.logging == Logger.types.DEBUG: 
-                logger.info("DEBUG mode enable, raising exception...")
-                raise e
-
+            except Exception as e:
+                logger.error(e)
+                if logger.logging == Logger.types.DEBUG: 
+                    logger.info("DEBUG mode enable, raising exception...")
+                    raise e
+        else:
+            logger.info("Shutdown thread Discord RPC...")
+            break
         time.sleep(acty.config.sleep)

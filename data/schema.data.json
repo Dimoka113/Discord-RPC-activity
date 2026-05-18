@@ -11,11 +11,11 @@
         "buttons": [
             {
                 "label": "You're Information", 
-                "url": "Links"
+                "url": "https://your.links"
             },
             {
                 "label": "And more more more", 
-                "url": "More links!"
+                "url": "https://more.links"
             }
         ]
     },
@@ -41,9 +41,6 @@
             "small_image": "vs",
             "small_text": "small_text",
             "large_text": "large_text"
-        },
-        {
-            "comment": "And more, And moreeeee..."
         },
         {
             "name": "Doing absolutely nothing",

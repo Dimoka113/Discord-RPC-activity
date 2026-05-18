@@ -42,13 +42,15 @@ class Activity(Gateway):
     def __init__(self):
         super().__init__(self.path, Logger("Activity-Gateway"))
         self.logger = Logger("Activity")
-        self.client = Client("data/client_id.json")
+        self.client = Client()
         self.rpc = Presence(self.client.decode(self.client.id))
         self.config = Config(self.read()["config"])
         self.sounds = Sound()
         self.display_activity = self.config.display_activity_on_start
         self.functions = Functions(self.logger, self.config, self.sounds)
 
+    def is_activity(self): return self.display_activity
+    def change_activity(self): self.display_activity = not self.display_activity; self.logger.debug(f"Change activity to {self.display_activity}")
     def get_activity(self): return self.read()["activity"]
 
     def connect(self) -> bool:

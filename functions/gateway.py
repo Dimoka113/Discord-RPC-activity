@@ -18,7 +18,6 @@ class Gateway(object):
 
     def read(self):
         if not os.path.isfile(self.path):
-            self.logger.error(f"data.json not found: {self.path}. Creating default.")
             return self._create_default()
 
         with open(self.path, "r", encoding="UTF-8") as file: 
@@ -49,18 +48,6 @@ If unsuccessful, outputs a log with `WARN` and returns `False`.
     def _create_default_data(self):
         self.logger.warn("A default data.json has been generated.")
         self.logger.info("If you need help filling out data.json, you can check out the example in schema.data.json")
-        return {
-            "config": {
-                    "keyboards": 
-                    {
-                        "hide_activity": "ALT+F12", 
-                        "show_activity": "ALT+F12"
-                    }, 
-                "display_activity_on_start": True,
-                "sleep": 5, 
-                "time_idle": 60, 
-                "sound_volume": 10, 
-                "buttons": []
-            }, 
-            "activity": []
-        }
+        
+        with open("data/schema.data.json", "r", encoding="UTF-8") as file: 
+            return json.load(file)

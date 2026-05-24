@@ -75,7 +75,7 @@ class Functions(object):
             if activity.get("idle") or activity.get("chill"): continue
 
             for name, exe in running:
-                exe = str(exe)
+                exe = str(exe).lower()
                 if name in self.lower_list(activity["processes"]): 
                     path = activity.get("path")
                     if path:

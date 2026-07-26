@@ -5,3 +5,5 @@ comtypes
 winotify
 pystray 
 pillow
+keyboard
+pywin32

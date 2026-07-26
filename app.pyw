@@ -1,29 +1,19 @@
 from functions.autopip import *
+from functions.logger import Logger
+
+Logger.level(Logger.types.DEBUG)
+Logger.is_color(False)
+Autopip()
+
 from threading import Thread, Event
 import time
-try:
-    from functions.statics import *
-    from data.activity import Activity
-    import keyboard
-    from pystray import MenuItem as item
-    from PIL import Image
-    from functions.threads import mainthread
-    from functions.threads import hotkeyhread
-    from functions.threads import traythread
-    from functions.logger import Logger
-except:
-    install_requirements()
-    from functions.statics import *
-    from data.activity import Activity
-    import keyboard
-    from functions.threads import mainthread
-    from functions.threads import hotkeyhread
-    from functions.threads import traythread
-    from functions.logger import Logger
 
-    
-Logger.level(Logger.types.INFO)
-Logger.is_color(False)
+from data.activity import Activity
+from functions.threads import mainthread
+from functions.threads import hotkeyhread
+from functions.threads import traythread
+
+
 
 
 if __name__ == "__main__":

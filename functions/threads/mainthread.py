@@ -12,7 +12,9 @@ def main(event: Event, logger: Logger, acty: Activity):
         logger.info("DEBUG mode enable, All actions will be logged. And all errors will return the exception stack")
         
     while not acty.is_connect:
-        if 'discord.exe' in acty.functions.get_running_processes(): acty.connect()
+        if 'discord.exe' in acty.functions.get_running_processes(): 
+            acty.connect()
+            logger.debug("Check done, Discord is open...")
         else: 
             if not start: logger.info("Waiting for Discord to open..."); start = 1
             else: logger.debug("Waiting for Discord to open..."); time.sleep(acty.config.sleep)
@@ -23,26 +25,36 @@ def main(event: Event, logger: Logger, acty: Activity):
                 if acty.display_activity: 
                     running = acty.functions.get_running_processes_exe()
                     if 'discord.exe' in acty.functions.get_running_processes(): 
-                        if not acty.is_connect: acty.connect()
-                        activity = acty.functions.detect_activity(running, acty.get_activity())
-                        logger.debug(activity)
-                        if activity != current_activity:
-                            current_activity = activity
-                            if activity is None:
-                                acty.rpc.clear()
-                                logger.info("Cleared")
+                        if acty.is_connect:
+                            if not acty.custom_activity["Off"]:
+                                for custom in acty.custom_activity:
+                                    if acty.custom_activity[custom]:
+                                        activity = next((item for item in acty.get_custom_activity() if item["name"] == custom), None)
                             else:
-                                acty.rpc.update(
-                                    details=activity["details"],
-                                    state=activity["state"],
-                                    name=activity["name"],
-                                    large_image=activity["large_image"],
-                                    small_image=activity["small_image"],
-                                    small_text=activity["small_text"],
-                                    buttons=acty.config.buttons,
-                                    large_text=activity["large_text"]
-                                )
-                                logger.info(activity['name'])
+                                activity = acty.functions.detect_activity(running, acty.get_activity())
+
+                            logger.debug(activity)
+                            if activity != current_activity:
+                                current_activity = activity
+                                if activity is None:
+                                    acty.rpc.clear()
+                                    logger.info("Cleared")
+                                else:
+                                    acty.rpc.update(
+                                        details=activity["details"],
+                                        state=activity["state"],
+                                        name=activity["name"],
+                                        large_image=activity["large_image"],
+                                        small_image=activity["small_image"],
+                                        small_text=activity["small_text"],
+                                        buttons=acty.config.buttons,
+                                        large_text=activity["large_text"]
+                                    )
+                                    logger.info(activity['name'])
+                        else: 
+                            acty.connect()
+                            time.sleep(1)
+                            continue            
                     else:
                         current_activity = None
                         acty.rpc.clear()

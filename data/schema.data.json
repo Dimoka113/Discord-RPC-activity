@@ -19,6 +19,18 @@
             }
         ]
     },
+    "custom_activity": [
+        {
+            "name": "Your custom activity!",
+            "details": "Details custom activity...",
+            "state": "Your custom state...",
+            "large_image": "large_custom_state_1",
+            "small_image": "custom_state_1",
+            "small_text": "small_text",
+            "large_text": "large_text"
+        }
+    ],
+
     "activity": [
         {
             "name": "Java",

@@ -38,6 +38,7 @@ class Activity(Gateway):
     sounds: Sound = None 
     is_connect = False
     display_activity = None
+    custom_activity: dict = {"Off": True}
 
     def __init__(self):
         super().__init__(self.path, Logger("Activity-Gateway"))
@@ -51,6 +52,13 @@ class Activity(Gateway):
 
     def is_activity(self): return self.display_activity
     def change_activity(self): self.display_activity = not self.display_activity; self.logger.debug(f"Change activity to {self.display_activity}")
+
+    def get_custom_activity(self) -> list: return self.read()["custom_activity"]
+    def get_custom_activity_names(self): 
+        data = [custom["name"] for custom in self.read()["custom_activity"]]
+        data.append("Off")
+        return data
+
     def get_activity(self): return self.read()["activity"]
 
     def connect(self) -> bool:
@@ -62,10 +70,12 @@ class Activity(Gateway):
                     self.rpc.connect() 
                 except:
                     self.logger.debug("Unable to establish connection for RPC"); 
+                    self.is_connect = False
                     continue
                 else:
                     return True
             self.logger.error("Unable to establish connection for RPC"); 
+            self.is_connect = False
             self.disconnect()
             return False
         else: 

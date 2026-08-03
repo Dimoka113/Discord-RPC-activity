@@ -8,42 +8,12 @@ from functions.threads.hotkeyhread import Notify
 import time
 
 class Tray(object):
-    change = False
     icon = None
     logger = None
     acty = None
     event = None
 
     def __init__(self, event: Event, logger: Logger, acty: Activity):
-        def on_exit(icon, _):
-            event.set()
-            icon.stop()
-            acty.rpc.clear()
-            acty.rpc.close()
-
-        def change_activity(item):
-            if acty.is_activity(): acty.rpc.clear()
-
-            acty.change_activity()
-            Notify.change_activity(acty.display_activity)
-            logger.info(f"Change status activity to turn {Notify.bool_to_str(acty.display_activity)}")
-
-        def is_activity(item): 
-            n = acty.is_activity()
-            return n
-
-        def on_custom_activity(icon, _):
-            for i in self.acty.custom_activity: self.acty.custom_activity[i] = False
-            self.acty.custom_activity[str(_)] = True
-
-        def check_custom_activity(item): 
-            if not str(item) in self.acty.custom_activity:
-                self.acty.custom_activity[str(item)] = False
-                self.logger.debug(self.acty.custom_activity)
-                return False
-            else:
-                return self.acty.custom_activity[str(item)]
-            
         self.event = event
         self.logger = logger
         self.acty = acty
@@ -52,14 +22,66 @@ class Tray(object):
             self.load_icon(),
             title="Discord RPC",
             menu=pystray.Menu(
-                item(text="Show activity", action=change_activity, checked=is_activity),
+                item(text="Show activity", action=self.change_activity, checked=self.is_activity),
                 Menu.SEPARATOR,
                 item("Custom activity", Menu(
-                    *[item(text=name, action=on_custom_activity, checked=check_custom_activity) for name in self.acty.get_custom_activity_names()]
+                    *[item(text=name, action=self.on_custom_activity, checked=self.check_custom_activity) for name in self.acty.get_custom_activity_names()]
                 )),
                 Menu.SEPARATOR,
-                item(text="Exit", action=on_exit)
-            ), 
+                item(text="Exit", action=self.on_exit)
+            ),
+        )
+
+    def on_exit(self, icon, _):
+        self.event.set()
+        self.icon.stop()
+        self.acty.rpc.clear()
+        self.acty.rpc.close()
+
+    def change_activity(self):
+        if self.acty.is_activity(): self.acty.rpc.clear()
+
+        self.acty.change_activity()
+        Notify.change_activity(self.acty.display_activity)
+        self.logger.info(f"Change status activity to turn {Notify.bool_to_str(self.acty.display_activity)}")
+
+    def is_activity(self, _=None): 
+        n = self.acty.is_activity()
+        return n
+
+    def on_custom_activity(self, icon, _):
+        for i in self.acty.custom_activity: self.acty.custom_activity[i] = False
+        self.acty.custom_activity[str(_)] = True
+
+    def check_custom_activity(self, item): 
+        if not str(item) in self.acty.custom_activity:
+            self.acty.custom_activity[str(item)] = False
+            self.logger.debug(self.acty.custom_activity)
+            return False
+        else:
+            return self.acty.custom_activity[str(item)]
+
+    def _build_menu(self):
+        return Menu(
+            item("Show activity", self.change_activity, checked=lambda _: self.is_activity(), ),
+            Menu.SEPARATOR,
+            item(
+                "Custom activity",
+                Menu(
+                    *[
+                        item(
+                            name,
+                            self.on_custom_activity,
+                            checked=self.check_custom_activity,
+                        )
+                        for name in self.acty.get_custom_activity_names()
+                    ]
+                ),
+            ),
+
+            Menu.SEPARATOR,
+
+            item("Exit", self.on_exit),
         )
 
     def load_icon(self, path: str = "data/app.ico"):
@@ -69,13 +91,13 @@ class Tray(object):
 
     def tray_checker(self):
         while not self.event.is_set():
-            if self.change: 
-                self.logger.debug("Change status in tray...")
-                self.icon.update_menu()
-                self.change = False
-            time.sleep(1)
+            self.logger.debug("Change status in tray...")
+            self.icon.menu = self._build_menu()
+            self.icon.update_menu()
+            time.sleep(3)
 
         self.logger.info("Shutdown Tray-Checker Thread...") 
+
     def main(self):
         self.icon.run_detached()
 

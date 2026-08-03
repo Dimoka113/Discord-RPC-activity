@@ -52,12 +52,19 @@ class Activity(Gateway):
 
     def is_activity(self): return self.display_activity
     def change_activity(self): self.display_activity = not self.display_activity; self.logger.debug(f"Change activity to {self.display_activity}")
-
     def get_custom_activity(self) -> list: return self.read()["custom_activity"]
+    
     def get_custom_activity_names(self): 
-        data = [custom["name"] for custom in self.read()["custom_activity"]]
-        data.append("Off")
-        return data
+        json_data = self.read()
+        if "custom_activity" in json_data:
+            data = [custom["name"] for custom in self.read()["custom_activity"]]
+            data.append("Off")
+            return data
+        else:
+            self.logger.debug("A new parameter has been added: \"custom_activity\""); 
+            json_data["custom_activity"] = []
+            self.write(json_data)
+            return ["Off"]
 
     def get_activity(self): return self.read()["activity"]
 

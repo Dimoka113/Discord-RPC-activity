@@ -49,5 +49,5 @@ If unsuccessful, outputs a log with `WARN` and returns `False`.
         self.logger.warn("A default data.json has been generated.")
         self.logger.info("If you need help filling out data.json, you can check out the example in schema.data.json")
         
-        with open("data/schema.data.json", "r", encoding="UTF-8") as file: 
+        with open("data/default.json", "r", encoding="UTF-8") as file: 
             return json.load(file)

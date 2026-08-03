@@ -1,6 +1,6 @@
 data.json
 __pycache__/
-.client
+.*
 logs/
 venv/
 .venv/

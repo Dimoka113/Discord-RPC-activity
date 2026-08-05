@@ -14,7 +14,7 @@
                 "url": "https://your.links"
             },
             {
-                "label": "And more more more", 
+                "label": "And more (Discord allows you to display a maximum of 2 buttons.)", 
                 "url": "https://more.links"
             }
         ]
@@ -38,7 +38,7 @@
             "path": ["D:\\Windows\\AppData\\Roaming\\ATLauncher\\jre\\bin\\javaw.exe"],
             "details": "details",
             "state": "state",
-            "large_image": "large_image",
+            "large_image": "https://your-link/to-image.png",
             "small_image": "vs",
             "small_text": "small_text",
             "large_text": "large_text"

@@ -4,7 +4,9 @@ from functions.logger import Logger
 from functions.statics import Functions
 from data.loader import Client
 from functions.sound import Sound
-import time
+import time, json
+from types import NoneType
+
 
 class Config(object):
     sleep = None
@@ -28,6 +30,22 @@ class Config(object):
         self.sound_volume = cfg["sound_volume"]
         self.display_activity_on_start = cfg["display_activity_on_start"]
 
+class Config_Logging(object):
+    path = "data/data.json"
+    level = None
+    is_color = False
+
+    def __init__(self, path: str = None):
+        if not isinstance(path, NoneType): self.path = path
+        data = self._read()["config"]["logging"]
+        level = getattr(Logger.types, str(data["level"]).upper(), None)
+        self.level = level if not isinstance(level, NoneType) else Logger.types.INFO
+        self.is_color = data["is_color"]
+
+    def _read(self):
+        with open(self.path, "r", encoding="UTF-8") as file: 
+            return json.load(file)
+
 class Activity(Gateway):
     path = "data/data.json"
     rpc: Presence = None
@@ -39,7 +57,7 @@ class Activity(Gateway):
     is_connect = False
     display_activity = None
     custom_activity: dict = {"Off": True}
-
+ 
     def __init__(self):
         super().__init__(self.path, Logger("Activity-Gateway"))
         self.logger = Logger("Activity")
@@ -80,6 +98,7 @@ class Activity(Gateway):
                     self.is_connect = False
                     continue
                 else:
+                    self.is_connect = True
                     return True
             self.logger.error("Unable to establish connection for RPC"); 
             self.is_connect = False

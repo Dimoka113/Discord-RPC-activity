@@ -2,6 +2,7 @@ import os
 from functions.gateway import Gateway
 from functions.logger import Logger
 
+
 class Client(Gateway):
     id = None
     p = "data/.client"

@@ -1,5 +1,9 @@
 {
     "config": {
+        "logging": {
+            "level": "INFO",
+            "is_color": false
+        },
         "keyboards": {
             "hide_activity": "ALT+F12",
             "show_activity": "ALT+F12"

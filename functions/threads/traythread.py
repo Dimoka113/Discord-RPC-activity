@@ -6,6 +6,8 @@ from functions.logger import Logger
 from data.activity import Activity
 from functions.threads.hotkeyhread import Notify
 import time
+from types import NoneType
+
 
 class Tray(object):
     icon = None
@@ -35,8 +37,15 @@ class Tray(object):
     def on_exit(self, icon, _):
         self.event.set()
         self.icon.stop()
-        self.acty.rpc.clear()
-        self.acty.rpc.close()
+
+        try:
+            if self.acty.is_connect and not isinstance(self.acty.display_activity, NoneType):
+                self.acty.rpc.clear()
+        except:
+            self.logger.error("Не удалось очистить статистику!")
+        finally:
+            if self.acty.is_connect:
+                self.acty.rpc.close()
 
     def change_activity(self):
         if self.acty.is_activity(): self.acty.rpc.clear()

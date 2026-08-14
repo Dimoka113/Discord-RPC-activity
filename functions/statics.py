@@ -4,9 +4,8 @@ from functions.logger import Logger
 from types import NoneType
 from typing import Any
 
+
 class LASTINPUTINFO(ctypes.Structure): _fields_ = [("cbSize", ctypes.c_uint), ("dwTime", ctypes.c_uint),]
-
-
 
 class Functions(object):
     logger: Logger = None

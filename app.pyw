@@ -1,8 +1,10 @@
 from functions.autopip import *
 from functions.logger import Logger
 
-Logger.level(Logger.types.DEBUG)
-Logger.is_color(False)
+from data.activity import Config_Logging
+cfglog = Config_Logging()
+Logger.is_color(cfglog.is_color)
+Logger.level(cfglog.level)
 Autopip()
 
 from threading import Thread, Event
@@ -12,8 +14,6 @@ from data.activity import Activity
 from functions.threads import mainthread
 from functions.threads import hotkeyhread
 from functions.threads import traythread
-
-
 
 
 if __name__ == "__main__":

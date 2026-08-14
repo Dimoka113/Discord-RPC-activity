@@ -5,15 +5,9 @@ from functions.logger import Logger
 import os
 import importlib
 
+
 class Autopip(object):
-    REQUIRED_MODULES = (
-    "psutil",
-    "pythoncom",
-    "pypresence",
-    "pystray",
-    "pycaw",
-    "keyboard",
-    )
+    REQUIRED_MODULES = ("psutil", "pythoncom", "pypresence", "pystray", "pycaw", "keyboard",)
     
     def __init__(self, logger: Logger = Logger("pip"), requirements_path: str = "requirements.txt"):
         self.logger = logger

@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 
+
 class Logger(object):
     """
     ### A class for displaying my project's logs.
@@ -32,19 +33,33 @@ class Logger(object):
         ph = Path(self.log_directory)
         if not ph.exists(): ph.mkdir(parents=True, exist_ok=True)
 
-    class colors():
-        green = "\033[32m"
-        yellow = "\033[33m"
-        red = "\033[31m"
+    class colors(object):
+        black   = "\033[30m"
+        red     = "\033[31m"
+        green   = "\033[32m"
+        yellow  = "\033[33m"
+        blue    = "\033[34m"
+        magenta = "\033[35m"
+        cyan    = "\033[36m"
+        white   = "\033[37m"
+
+        light_black   = "\033[90m"
+        light_red     = "\033[91m"
+        light_green   = "\033[92m"
+        light_yellow  = "\033[93m"
+        light_blue    = "\033[94m"
+        light_magenta = "\033[95m"
+        light_cyan    = "\033[96m"
+        light_white   = "\033[97m"
+
         reset = "\033[0m"
-        light_red = "\033[1;31m"
 
     class types():
         ERROR = ["error", "critical"]
         WARN = ["warn", "error", "critical"]
         INFO = ["info", "warn", "error", "critical"]
         DEBUG = ["debug", "info", "warn", "error", "critical"]
-
+        TRACE = ["trace", "debug", "info", "warn", "error", "critical"]
     logging = types.INFO
 
     def _get_log_path(self): return Path(self.log_directory) / f"{self.thread_name}.log"
@@ -115,8 +130,9 @@ class Logger(object):
         cls.max_file_size = max_size_mb * 1024 * 1024
         Path(directory).mkdir(parents=True, exist_ok=True)
 
-    def debug(self, *text):self._log("DEBUG", text, "", "debug")
-    def info(self, *text):self._log("INFO", text, self.colors.green, "info")
-    def warn(self, *text):self._log("WARN", text, self.colors.yellow, "warn")
-    def error(self, *text):self._log("ERROR", text, self.colors.light_red, "error")
-    def crit(self, *text):self._log("CRITICAL", text, self.colors.red, "critical")
+    def trace(self, *text): self._log("TRACE", text, "", "trace")
+    def debug(self, *text): self._log("DEBUG", text, "", "debug")
+    def info(self, *text): self._log("INFO", text, self.colors.green, "info")
+    def warn(self, *text): self._log("WARN", text, self.colors.yellow, "warn")
+    def error(self, *text): self._log("ERROR", text, self.colors.light_red, "error")
+    def crit(self, *text): self._log("CRITICAL", text, self.colors.red, "critical")

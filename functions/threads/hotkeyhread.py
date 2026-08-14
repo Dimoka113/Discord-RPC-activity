@@ -4,6 +4,7 @@ import keyboard
 from functions.notify import Notify
 from functions.threads.traythread import Tray
 
+
 def main(logger: Logger, acty: Activity, tray: Tray):
     hide_act = acty.config.keyboards.hide_activity
     show_act = acty.config.keyboards.show_activity

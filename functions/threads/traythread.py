@@ -91,7 +91,7 @@ class Tray(object):
 
     def tray_checker(self):
         while not self.event.is_set():
-            self.logger.debug("Change status in tray...")
+            self.logger.trace("Change status in tray...")
             self.icon.menu = self._build_menu()
             self.icon.update_menu()
             time.sleep(3)

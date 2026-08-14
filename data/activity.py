@@ -95,5 +95,29 @@ class Activity(Gateway):
         self.is_connect = False
         self.rpc.close()
 
-
-    
+    def update_activity(self, activity):
+        if not 'time' in activity:
+            self.rpc.set(
+                details=activity["details"],
+                state=activity["state"],
+                name=activity["name"],
+                large_image=activity["large_image"],
+                small_image=activity["small_image"],
+                small_text=activity["small_text"],
+                buttons=self.config.buttons,
+                large_text=activity["large_text"]
+            )
+        else:
+            self.rpc.update(
+                details=activity["details"],
+                state=activity["state"],
+                name=activity["name"],
+                start=1,
+                end=activity["time"]+1,
+                large_image=activity["large_image"],
+                small_image=activity["small_image"],
+                small_text=activity["small_text"],
+                buttons=self.config.buttons,
+                large_text=activity["large_text"]
+            )
+        

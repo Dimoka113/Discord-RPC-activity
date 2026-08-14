@@ -3,6 +3,8 @@ from data.activity import Activity
 import time
 import pythoncom
 from threading import Event
+from datetime import datetime
+
 
 def main(event: Event, logger: Logger, acty: Activity):
     pythoncom.CoInitialize()
@@ -17,7 +19,7 @@ def main(event: Event, logger: Logger, acty: Activity):
             logger.debug("Check done, Discord is open...")
         else: 
             if not start: logger.info("Waiting for Discord to open..."); start = 1
-            else: logger.debug("Waiting for Discord to open..."); time.sleep(acty.config.sleep)
+            else: logger.trace("Waiting for Discord to open..."); time.sleep(acty.config.sleep)
     
     while True:
         if not event.is_set():
@@ -40,36 +42,29 @@ def main(event: Event, logger: Logger, acty: Activity):
                                     acty.rpc.clear()
                                     logger.info("Cleared")
                                 else:
-                                    acty.rpc.update(
-                                        details=activity["details"],
-                                        state=activity["state"],
-                                        name=activity["name"],
-                                        large_image=activity["large_image"],
-                                        small_image=activity["small_image"],
-                                        small_text=activity["small_text"],
-                                        buttons=acty.config.buttons,
-                                        large_text=activity["large_text"]
-                                    )
-                                    logger.info(activity['name'])
+                                    acty.update_activity(activity)
+                                logger.info(activity['name'])
+                                logger.debug(activity["time"]+1)
                         else: 
                             acty.connect()
                             time.sleep(1)
+                            acty.update_activity(activity)
+                            logger.info(activity['name'])
                             continue            
                     else:
                         current_activity = None
-                        acty.rpc.clear()
                         time.sleep(1)
                         if acty.is_connect: acty.disconnect()
-                        logger.debug("Waiting for Discord to open...")
+                        logger.trace("Waiting for Discord to open...")
                 else:
                     current_activity = None
                     time.sleep(1)
                     if acty.is_connect: acty.disconnect()
-                    logger.debug("Waiting for the user to enable display activity...")     
+                    logger.trace("Waiting for the user to enable display activity...")     
 
             except Exception as e:
                 logger.error(e)
-                if logger.logging == Logger.types.DEBUG: 
+                if "debug" in logger.logging: 
                     logger.info("DEBUG mode enable, raising exception...")
                     raise e
         else:

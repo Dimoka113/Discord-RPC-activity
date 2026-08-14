@@ -1,8 +1,8 @@
 from functions.autopip import *
 from functions.logger import Logger
 
-Logger.level(Logger.types.DEBUG)
-Logger.is_color(False)
+Logger.level(Logger.types.TRACE)
+Logger.is_color(True)
 Autopip()
 
 from threading import Thread, Event

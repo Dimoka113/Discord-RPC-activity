@@ -3,6 +3,7 @@ import ctypes
 from functions.logger import Logger
 from types import NoneType
 from typing import Any
+import time
 
 class LASTINPUTINFO(ctypes.Structure): _fields_ = [("cbSize", ctypes.c_uint), ("dwTime", ctypes.c_uint),]
 
@@ -43,18 +44,24 @@ class Functions(object):
 
     def get_running_processes_exe(self):
         processes = set()
+        used = []
 
-        for proc in psutil.process_iter(["name", "exe"]):
-            try:
-                name: str = proc.info["name"]
-                exe: str = proc.info["exe"]
-                if name: processes.add((name.lower(), exe))
+        for proc in psutil.process_iter(["name", "pid", "exe", 'create_time']):
+            name: str = proc.info["name"]
+            if not name in used:
+                try:
+                    exe: str = proc.info["exe"]
+                    create_time: float = (time.time() - proc.info["create_time"])
+                    if name: 
+                        processes.add((name.lower(), exe, create_time))
 
-            except (psutil.NoSuchProcess,
-                    psutil.AccessDenied,
-                    psutil.ZombieProcess):
-                pass
-
+                except (psutil.NoSuchProcess,
+                        psutil.AccessDenied,
+                        psutil.ZombieProcess):
+                    pass
+                used.append(name)
+            else:
+                continue
         return list(processes)
 
     def detect_activity(self, running: Any, act: list[dict]):
@@ -65,23 +72,24 @@ class Functions(object):
         self.logger.debug(self.config.time_idle // self.config.sleep)
         if self.sounds.get_len_dumps() >= (self.config.time_idle // self.config.sleep):
             self.sounds.sound = self.sounds.get_dumps(); self.sounds.set_zero()
-            self.logger.debug("sum sounds:", self.sounds.sound)
+            self.logger.trace("sum sounds:", self.sounds.sound)
 
         if idle_time > 0: self.logger.debug("time in afk:", idle_time)
         new_activity = None
-
         for activity in act:
             if activity.get("idle") or activity.get("chill"): continue
 
-            for name, exe in running:
+            for name, exe, time in running:
                 exe = str(exe).lower()
                 if name in self.lower_list(activity["processes"]): 
                     path = activity.get("path")
                     if path:
                         if exe in self.lower_list(path): 
-                            new_activity = activity; break
+                            new_activity = activity
+                            new_activity["time"] = time
                     else:
-                        new_activity = activity; break
+                        new_activity = activity
+                        new_activity["time"] = time
                     
             if new_activity: break
 
@@ -98,5 +106,5 @@ class Functions(object):
             for activity in act:
                 if activity.get("chill") and isinstance(new_activity, NoneType):
                     new_activity = activity
-                    
+
         return new_activity

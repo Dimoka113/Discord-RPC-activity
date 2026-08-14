@@ -44,7 +44,7 @@ class Logger(object):
         WARN = ["warn", "error", "critical"]
         INFO = ["info", "warn", "error", "critical"]
         DEBUG = ["debug", "info", "warn", "error", "critical"]
-
+        TRACE = ["trace", "debug", "info", "warn", "error", "critical"]
     logging = types.INFO
 
     def _get_log_path(self): return Path(self.log_directory) / f"{self.thread_name}.log"
@@ -115,8 +115,9 @@ class Logger(object):
         cls.max_file_size = max_size_mb * 1024 * 1024
         Path(directory).mkdir(parents=True, exist_ok=True)
 
-    def debug(self, *text):self._log("DEBUG", text, "", "debug")
-    def info(self, *text):self._log("INFO", text, self.colors.green, "info")
-    def warn(self, *text):self._log("WARN", text, self.colors.yellow, "warn")
-    def error(self, *text):self._log("ERROR", text, self.colors.light_red, "error")
-    def crit(self, *text):self._log("CRITICAL", text, self.colors.red, "critical")
+    def trace(self, *text): self._log("TRACE", text, "", "trace")
+    def debug(self, *text): self._log("DEBUG", text, "", "debug")
+    def info(self, *text): self._log("INFO", text, self.colors.green, "info")
+    def warn(self, *text): self._log("WARN", text, self.colors.yellow, "warn")
+    def error(self, *text): self._log("ERROR", text, self.colors.light_red, "error")
+    def crit(self, *text): self._log("CRITICAL", text, self.colors.red, "critical")

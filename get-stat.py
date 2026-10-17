@@ -19,14 +19,17 @@ class Getstat(object):
             if (("[DEBUG]" in i) or ("DEBUG mode enable" in i) or ("[ERROR]" in i) or i == ""): 
                 continue
             else: 
-                gamedata = i.replace("[Get-stat-only] ", "").replace("[INFO] [Main] ", "|| ").split(" || ")
-                if len(gamedata[0].split()) > 2:
-                    gamedata[0] = " ".join(str(gamedata[0]).split()[1:])
+                if ("[INFO] [Main]" in i):
+                    gamedata = i.replace("[Get-stat-only] ", "").replace("[INFO] [Main] ", "|| ").split(" || ")
+                    if len(gamedata[0].split()) > 2:
+                        gamedata[0] = " ".join(str(gamedata[0]).split()[1:])
 
-                if ("Shutdown thread Discord RPC" in i) or ("Waiting for Discord to open" in i):
-                    data.append([gamedata[0].replace("[", "").replace("]", ""), "{red}Downtime{reset}"])
-                else:
-                    data.append([gamedata[0].replace("[", "").replace("]", ""), gamedata[1]])
+                    if ("Shutdown thread Discord RPC" in i):
+                        data.append([gamedata[0].replace("[", "").replace("]", ""), "{red}Downtime{reset}", False])
+                    elif ("Waiting for Discord to open" in i):
+                        data.append([gamedata[0].replace("[", "").replace("]", ""), "{red}Downtime{reset}", True])
+                    else:
+                        data.append([gamedata[0].replace("[", "").replace("]", ""), gamedata[1], False])
         return data
 
     @staticmethod
@@ -73,7 +76,7 @@ class Getstat(object):
             end = datetime.datetime.fromisoformat(following[0])
 
             diff = (end - start).total_seconds()
-            game = current[1]
+            game = following[1] if following[2] else current[1]
 
             if game not in gamestats:
                 gamestats[game] = 0.0

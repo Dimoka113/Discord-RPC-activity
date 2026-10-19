@@ -87,6 +87,7 @@ class Activity(Gateway):
     def get_activity(self): return self.read()["activity"]
 
     def connect(self) -> bool:
+        self.logger.trace("Try to send connecting RPC...")
         try: self.rpc.connect() 
         except: 
             for wait in range(1, 5+1):

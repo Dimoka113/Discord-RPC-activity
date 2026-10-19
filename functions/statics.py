@@ -86,9 +86,8 @@ class Functions(object):
 
         is_idle_time = idle_time >= self.config.time_idle
         is_loud = self.sounds.sound <= self.config.sound_volume
-        result = is_idle_time and is_loud
 
-        if result:  
+        if is_idle_time and is_loud:  
             self.logger.debug("-"*10)
             for activity in act:
                 if activity.get("idle"):

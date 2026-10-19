@@ -6,6 +6,28 @@ from threading import Event
 from types import NoneType
 
 
+def forgetstat_only(logger: Logger, acty: Activity, current_activity: dict):
+    # Only for get-stats
+    running = acty.functions.get_running_processes_exe()
+    if not acty.custom_activity["Off"]:
+        for custom in acty.custom_activity:
+            if acty.custom_activity[custom]:
+                activity = next((item for item in acty.get_custom_activity() if item["name"] == custom), None)
+    else:
+        activity = acty.functions.detect_activity(running, acty.get_activity())
+
+    if activity != current_activity:
+        if not acty.custom_activity["Off"]:
+            for custom in acty.custom_activity:
+                if acty.custom_activity[custom]:
+                    activity = next((item for item in acty.get_custom_activity() if item["name"] == custom), None)
+        else:
+            activity = acty.functions.detect_activity(running, acty.get_activity())
+
+        logger.info("[Get-stat-only] " + activity['name'])
+        current_activity = activity
+    # End Only for get-stats
+
 def main(event: Event, logger: Logger, acty: Activity):
     pythoncom.CoInitialize()
 
@@ -45,7 +67,11 @@ def main(event: Event, logger: Logger, acty: Activity):
         if event.is_set(): logger.info("Shutdown thread Discord RPC..."); return
 
 
+    logger.debug("Discord is Open... Send RPC stat.")
+    current_activity = None; activity = ""
+
     while True:
+        logger.trace(activity)
         try:
             if acty.display_activity: 
                 running = acty.functions.get_running_processes_exe()
@@ -85,32 +111,14 @@ def main(event: Event, logger: Logger, acty: Activity):
                     time.sleep(1)
                     if acty.is_connect: acty.disconnect()
                     logger.debug("Waiting for Discord to open...")
+                    forgetstat_only(logger, acty, current_activity)
+
             else:
                 current_activity = None
                 time.sleep(1)
                 if acty.is_connect: acty.disconnect()
                 logger.debug("Waiting for the user to enable display activity...")
-
-                # Only for get-stats
-                running = acty.functions.get_running_processes_exe()
-                if not acty.custom_activity["Off"]:
-                    for custom in acty.custom_activity:
-                        if acty.custom_activity[custom]:
-                            activity = next((item for item in acty.get_custom_activity() if item["name"] == custom), None)
-                else:
-                    activity = acty.functions.detect_activity(running, acty.get_activity())
-
-                if activity != current_activity:
-                    if not acty.custom_activity["Off"]:
-                        for custom in acty.custom_activity:
-                            if acty.custom_activity[custom]:
-                                activity = next((item for item in acty.get_custom_activity() if item["name"] == custom), None)
-                    else:
-                        activity = acty.functions.detect_activity(running, acty.get_activity())
-
-                    logger.info("[Get-stat-only] " + activity['name'])
-                    current_activity = activity
-                # End Only for get-stats
+                forgetstat_only(logger, acty, current_activity)
 
         except Exception as e:
             logger.error(e)

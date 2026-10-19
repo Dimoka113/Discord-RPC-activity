@@ -30,4 +30,5 @@ if __name__ == "__main__":
 
     while not event.is_set(): time.sleep(1)
 
+    time.sleep(2)
     logger.info("Shutdown App Thread...") 

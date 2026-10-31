@@ -57,7 +57,8 @@ class Activity(Gateway):
     is_connect = False
     display_activity = None
     custom_activity: dict = {"Off": True}
- 
+    need_update = True
+
     def __init__(self):
         super().__init__(self.path, Logger("Activity-Gateway"))
         self.logger = Logger("Activity")
@@ -88,11 +89,15 @@ class Activity(Gateway):
 
     def connect(self) -> bool:
         self.logger.trace("Try to send connecting RPC...")
-        try: self.rpc.connect() 
-        except: 
+        self.need_update = True
+        try: 
+            if isinstance(self.rpc, NoneType): self.rpc = Presence(self.client.decode(self.client.id))
+            self.rpc.connect() 
+        except Exception as err: 
+            self.logger.debug(err); 
             for wait in range(1, 5+1):
                 try:
-                    time.sleep(self.config.sleep * wait)
+                    time.sleep(self.config.sleep + wait)
                     self.rpc.connect() 
                 except:
                     self.logger.debug("Unable to establish connection for RPC"); 
@@ -113,7 +118,20 @@ class Activity(Gateway):
     def disconnect(self): 
         self.logger.debug("Close RPC session..")
         self.is_connect = False
-        self.rpc.close()
+        try:
+            self.rpc.close()
+            return True
+        except AttributeError as err:
+            return False
 
 
-    
+    def reconnect(self):
+        try:
+            self.disconnect()
+            return self.connect() 
+        except Exception as err:
+            self.logger.debug("reconnect error:", err)
+            if self.logger.logging in [Logger.types.DEBUG, Logger.types.TRACE]: 
+                self.logger.info("DEBUG mode enable, raising exception...")
+                raise err
+            return False
